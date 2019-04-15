@@ -1477,7 +1477,7 @@ class DatabaseController {
       )
       .catch(error => {
         logger.warn('Unable to ensure uniqueness for usernames: ', error);
-        throw error;
+        return Promise.reject(error);
       });
 
     const emailUniqueness = userClassPromise
@@ -1489,7 +1489,7 @@ class DatabaseController {
           'Unable to ensure uniqueness for user email addresses: ',
           error
         );
-        throw error;
+        return Promise.reject(error);
       });
 
     const roleUniqueness = roleClassPromise
@@ -1498,7 +1498,7 @@ class DatabaseController {
       )
       .catch(error => {
         logger.warn('Unable to ensure uniqueness for role name: ', error);
-        throw error;
+        return Promise.reject(error);
       });
 
     const indexPromise = this.adapter.updateSchemaWithIndexes();

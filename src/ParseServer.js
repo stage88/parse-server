@@ -96,23 +96,29 @@ class ParseServer {
     this.config = Config.put(Object.assign({}, options, allControllers));
 
     logging.setLogger(loggerController);
-    const dbInitPromise = databaseController.performInitialization();
-    hooksController.load();
+    const dbInitPromise = databaseController
+      .performInitialization()
+      .then(() => {
+        hooksController.load();
+
+        if (cloud) {
+          addParseCloud();
+          if (typeof cloud === 'function') {
+            cloud(Parse);
+          } else if (typeof cloud === 'string') {
+            require(path.resolve(process.cwd(), cloud));
+          } else {
+            throw "argument 'cloud' must either be a string or a function";
+          }
+        }
+      })
+      .catch(err => {
+        loggerController.error('Error starting Parse Server: ', err);
+      });
 
     // Note: Tests will start to fail if any validation happens after this is called.
     if (process.env.TESTING) {
       __indexBuildCompletionCallbackForTests(dbInitPromise);
-    }
-
-    if (cloud) {
-      addParseCloud();
-      if (typeof cloud === 'function') {
-        cloud(Parse);
-      } else if (typeof cloud === 'string') {
-        require(path.resolve(process.cwd(), cloud));
-      } else {
-        throw "argument 'cloud' must either be a string or a function";
-      }
     }
   }
 

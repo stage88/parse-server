@@ -560,17 +560,16 @@ export default class SchemaController {
     }
     this.reloadDataPromise = promise
       .then(() => {
-        return this.getAllClasses(options).then(
-          allSchemas => {
+        return this.getAllClasses(options)
+          .then(allSchemas => {
             this.schemaData = new SchemaData(allSchemas, this.protectedFields);
             delete this.reloadDataPromise;
-          },
-          err => {
+          })
+          .catch(err => {
             this.schemaData = new SchemaData();
             delete this.reloadDataPromise;
-            throw err;
-          }
-        );
+            return Promise.reject(err);
+          });
       })
       .then(() => {});
     return this.reloadDataPromise;

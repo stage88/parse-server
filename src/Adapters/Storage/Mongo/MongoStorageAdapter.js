@@ -188,7 +188,7 @@ export class MongoStorageAdapter implements StorageAdapter {
       delete this.connectionPromise;
       logger.error('Received unauthorized error', { error: error });
     }
-    throw error;
+    return Promise.reject(error);
   }
 
   handleShutdown() {

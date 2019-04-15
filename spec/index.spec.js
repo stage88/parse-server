@@ -62,7 +62,7 @@ describe('server', () => {
       databaseAdapter: new MongoStorageAdapter({
         uri: 'mongodb://fake:fake@localhost:43605/drew3',
       }),
-    }).catch(() => {
+    }).then(() => {
       //Need to use rest api because saving via JS SDK results in fail() not getting called
       request({
         method: 'POST',
